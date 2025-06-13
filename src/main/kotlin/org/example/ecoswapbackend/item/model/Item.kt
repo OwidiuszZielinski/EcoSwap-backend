@@ -8,6 +8,7 @@ import org.example.ecoswapbackend.item.dto.toItemResponse
 import org.springframework.data.annotation.Id
 import org.springframework.data.mongodb.core.mapping.Document
 import org.springframework.data.mongodb.repository.MongoRepository
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import java.math.BigDecimal
 import java.time.Instant
@@ -23,7 +24,7 @@ data class Item(
     val photoBase64: String,
     val ownerId: String?,
     val available: Boolean = true,
-    val createdAt: Instant = Instant.now(),
+    val createdAt: Instant? = Instant.now(),
     val hotDeal: Boolean = false,
 )
 
@@ -49,6 +50,7 @@ fun Item.toDto() = ItemDto(
 
 interface ItemRepository : MongoRepository<Item, String>{
     fun findByHotDealTrue(): List<Item>
+    fun findByOwnerId(ownerId: String): List<Item>
 }
 
 @RestController
@@ -67,9 +69,24 @@ class ItemController(private val repo: ItemRepository) {
                 .map { it.toDto() }
     }
 
+    @GetMapping("/owner/{ownerId}")
+    fun getByOwnerId(@PathVariable ownerId: String): List<ItemDto> {
+        return repo.findByOwnerId(ownerId).map { it.toDto() }
+    }
+
     @PostMapping
     fun create(@RequestBody body: ItemDto): ItemResponse? {
         repo.save(toEntity(body))
         return toItemResponse(body);
+    }
+
+    @DeleteMapping("/{id}")
+    fun deleteItem(@PathVariable id: String): ResponseEntity<Unit> {
+        return if (repo.existsById(id)) {
+            repo.deleteById(id)
+            ResponseEntity.ok().build()
+        } else {
+            ResponseEntity.notFound().build()
+        }
     }
 }

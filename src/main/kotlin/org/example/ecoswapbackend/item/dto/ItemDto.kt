@@ -17,8 +17,8 @@ data class ItemDto(
     val ownerId: String?,
     val photoDataUrl: String,
     val available: Boolean,
-    val createdAt: Instant,
-    val hotDeal: Boolean,
+    val createdAt: Instant?,
+    val hotDeal: Boolean
 )
 
 fun toEntity(dto: ItemDto): Item {
@@ -32,8 +32,7 @@ fun toEntity(dto: ItemDto): Item {
         photoBase64 = dto.photoDataUrl.substringAfter(","),
         ownerId = dto.ownerId,
         available = dto.available,
-        createdAt = dto.createdAt,
-        hotDeal = dto.hotDeal,
+        createdAt = dto.createdAt
     )
 
 }
@@ -46,8 +45,7 @@ data class ItemResponse(
     val category: Category,
     val condition: Condition,
     val ownerId: String?,
-    val createdAt: Instant,
-    val hotDeal: Boolean,
+    val createdAt: Instant?
 )
 
 fun toItemResponse(dto: ItemDto): ItemResponse {
@@ -59,7 +57,6 @@ fun toItemResponse(dto: ItemDto): ItemResponse {
         category = dto.category,
         condition = dto.condition,
         ownerId = dto.ownerId,
-        createdAt = dto.createdAt,
-        hotDeal = dto.hotDeal,
+        createdAt = dto.createdAt
     )
 }
