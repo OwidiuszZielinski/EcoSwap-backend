@@ -28,10 +28,8 @@ data class Item(
     val hotDeal: Boolean = false,
 )
 
-
 enum class Category { ELECTRONICS, SPORT, CHILDREN, HOME, OTHER }
 enum class Condition { NEW, VERY_GOOD, GOOD, OK, DAMAGED }
-
 
 fun Item.toDto() = ItemDto(
     id = id.toString(),
@@ -47,8 +45,7 @@ fun Item.toDto() = ItemDto(
     hotDeal = hotDeal
 )
 
-
-interface ItemRepository : MongoRepository<Item, String>{
+interface ItemRepository : MongoRepository<Item, String> {
     fun findByHotDealTrue(): List<Item>
     fun findByOwnerId(ownerId: String): List<Item>
 }
@@ -65,8 +62,8 @@ class ItemController(private val repo: ItemRepository) {
     @GetMapping
     @RequestMapping("/deals")
     fun getDeals(): List<ItemDto> {
-           return repo.findByHotDealTrue()
-                .map { it.toDto() }
+        return repo.findByHotDealTrue()
+            .map { it.toDto() }
     }
 
     @GetMapping("/owner/{ownerId}")
@@ -77,7 +74,7 @@ class ItemController(private val repo: ItemRepository) {
     @PostMapping
     fun create(@RequestBody body: ItemDto): ItemResponse? {
         repo.save(toEntity(body))
-        return toItemResponse(body);
+        return toItemResponse(body)
     }
 
     @DeleteMapping("/{id}")
@@ -85,6 +82,17 @@ class ItemController(private val repo: ItemRepository) {
         return if (repo.existsById(id)) {
             repo.deleteById(id)
             ResponseEntity.ok().build()
+        } else {
+            ResponseEntity.notFound().build()
+        }
+    }
+
+    @PutMapping("/{id}")
+    fun updateItem(@PathVariable id: String, @RequestBody body: ItemDto): ResponseEntity<ItemResponse> {
+        return if (repo.existsById(id)) {
+            val updatedItem = toEntity(body).copy(id = ObjectId(id))
+            repo.save(updatedItem)
+            ResponseEntity.ok(toItemResponse(body))
         } else {
             ResponseEntity.notFound().build()
         }
