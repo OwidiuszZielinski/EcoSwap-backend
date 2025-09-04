@@ -4,6 +4,11 @@ import org.springframework.stereotype.Service
 
 @Service
 class UserService(private val userRepository: UserRepository) {
+    fun authenticate(email: String, password: String): User? {
+        // Przykładowa implementacja:
+        val user = userRepository.findByEmail(email)
+        return if (user != null && user.password == password) user else null
+    }
 
     fun getAllUsers(): List<User> = userRepository.findAll()
 

@@ -17,12 +17,13 @@ class DataLoader {
 
     @Bean
     fun createUsers(userRepository: UserRepository) = CommandLineRunner {
+        userRepository.deleteAll();
         val users = listOf(
-            User(username = "jdoe", firstName = "John", lastName = "Doe", points = 120),
-            User(username = "asmith", firstName = "Anna", lastName = "Smith", points = 80),
-            User(username = "mmeyer", firstName = "Maria", lastName = "Meyer", points = 50),
-            User(username = "rnowak", firstName = "Robert", lastName = "Nowak", points = 200),
-            User(username = "klee", firstName = "Karl", lastName = "Lee", points = 30)
+            User(id= "1",email = "jdoe@example.com", password= "jdoe123",username = "jdoe", firstName = "John", lastName = "Doe", points = 120),
+            User(id= "2",email = "asmith@example.com", password= "asmith123",username = "asmith", firstName = "Anna", lastName = "Smith", points = 80),
+            User(id= "3",email = "mmeyer@example.com", password= "mmeyer123",username = "mmeyer", firstName = "Maria", lastName = "Meyer", points = 50),
+            User(id= "4",email = "rnowak@example.com", password= "rnowak123",username = "rnowak", firstName = "Robert", lastName = "Nowak", points = 200),
+            User(id= "5",email = "klee@example.com", password= "klee123",username = "klee", firstName = "Karl", lastName = "Lee", points = 30)
         )
 
         userRepository.saveAll(users)
